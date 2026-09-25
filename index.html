@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cold Open</title>
+    <meta name="description" content="A daily security puzzle. Three real techniques, five minutes, generated fresh every day." />
+    <meta name="theme-color" content="#0b0b0c" />
+    <link rel="canonical" href="https://lwesson.github.io/cold-open/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Cold Open, a daily security puzzle" />
+    <meta property="og:description" content="Three real techniques, five minutes. Ciphers, log forensics, and network traffic, generated fresh every day." />
+    <meta property="og:url" content="https://lwesson.github.io/cold-open/" />
+    <meta property="og:image" content="https://lwesson.github.io/cold-open/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' fill='%230b0b0c'/%3E%3Crect x='3.5' y='6.5' width='21' height='15' fill='none' stroke='%23e9b949' stroke-width='1.6'/%3E%3Cg fill='%23e9b949'%3E%3Crect x='6' y='9' width='2' height='2'/%3E%3Crect x='6' y='13' width='2' height='2'/%3E%3Crect x='6' y='17' width='2' height='2'/%3E%3Crect x='20' y='9' width='2' height='2'/%3E%3Crect x='20' y='13' width='2' height='2'/%3E%3Crect x='20' y='17' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="backdrop" class="backdrop" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="frame" aria-hidden="true">
+      <i class="tick tl"></i><i class="tick tr"></i><i class="tick bl"></i><i class="tick br"></i>
+    </div>
+
+    <main class="shell">
+      <header class="masthead">
+        <button class="wordmark" data-home type="button" aria-label="Cold Open, home">
+          <svg class="logo" viewBox="0 0 28 28" aria-hidden="true">
+            <rect x="3.2" y="6.2" width="21.6" height="15.6" fill="none"
+                  stroke="currentColor" stroke-width="1.5" />
+            <g fill="currentColor">
+              <rect x="5.9" y="8.7" width="2.1" height="2.1" />
+              <rect x="5.9" y="12.95" width="2.1" height="2.1" />
+              <rect x="5.9" y="17.2" width="2.1" height="2.1" />
+              <rect x="20" y="8.7" width="2.1" height="2.1" />
+              <rect x="20" y="12.95" width="2.1" height="2.1" />
+              <rect x="20" y="17.2" width="2.1" height="2.1" />
+            </g>
+          </svg>
+          <span class="wordmark-text">Cold<em>Open</em></span>
+        </button>
+        <span class="status"><i class="dot"></i>channel open</span>
+      </header>
+
+      <div class="editionline">
+        <span>Edition <b id="day-number"></b></span>
+        <span id="edition-date"></span>
+        <span class="rule"></span>
+        <span class="cls">Unclassified</span>
+      </div>
+
+      <div class="stepper" id="stepper" hidden></div>
+
+      <!-- home -->
+      <section id="screen-home" class="screen">
+        <div class="hero">
+          <span class="eyebrow">Daily briefing</span>
+          <h1 class="tagline">
+            Three real<br />techniques.<br /><em>Five minutes.</em>
+          </h1>
+          <p class="hero-sub">
+            Ciphers, log forensics, and network traffic. Generated fresh every day,
+            so there is no walkthrough to look up. Only the method.
+          </p>
+        </div>
+
+        <div class="actions">
+          <button id="btn-daily" class="primary" type="button">Start today's briefing</button>
+          <button id="btn-practice" class="ghost" type="button">Practice, unlimited</button>
+        </div>
+        <p class="muted note" id="daily-note"></p>
+
+        <h2 class="sec-label">Service record</h2>
+        <div class="stats">
+          <div class="stat"><span id="stat-streak">0</span><label>streak</label></div>
+          <div class="stat"><span id="stat-best">0</span><label>best</label></div>
+          <div class="stat"><span id="stat-played">0</span><label>days</label></div>
+          <div class="stat"><span id="stat-accuracy">0%</span><label>solved</label></div>
+        </div>
+
+        <h2 class="sec-label">Domains in rotation</h2>
+        <ul class="domain-legend">
+          <li data-domain="crypto">
+            <i></i><b>Crypto</b><em>Caesar, Vigenere, XOR</em>
+          </li>
+          <li data-domain="forensics">
+            <i></i><b>Forensics</b><em>Log triage, intrusion</em>
+          </li>
+          <li data-domain="network">
+            <i></i><b>Network</b><em>Exfil, C2, tunneling</em>
+          </li>
+        </ul>
+      </section>
+
+      <!-- briefing -->
+      <section id="screen-briefing" class="screen" hidden>
+        <div class="playbar">
+          <span class="progress"><span id="briefing-step"></span></span>
+          <span class="voice-controls">
+            <select id="voice-picker" class="voice-picker" aria-label="Handler voice" hidden></select>
+            <button id="btn-voice" class="voice-toggle" type="button" aria-pressed="false" hidden>
+              Voice off
+            </button>
+          </span>
+        </div>
+
+        <div class="puzzle-head">
+          <span class="domain" id="briefing-domain"></span>
+          <span class="difficulty" id="briefing-difficulty"></span>
+        </div>
+
+        <div class="briefing-panel">
+          <div class="panel-head">
+            <span class="briefing-label">Handler</span>
+            <span class="panel-meta">secure channel</span>
+          </div>
+          <div class="panel-body">
+            <p id="briefing-text" class="briefing-text" title="Click to skip"></p>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="btn-begin" class="primary" type="button">Begin</button>
+          <button class="ghost" data-home type="button">Back</button>
+        </div>
+      </section>
+
+      <!-- play -->
+      <section id="screen-play" class="screen" hidden>
+        <div class="playbar">
+          <span class="progress" id="play-progress"></span>
+          <span class="timer" id="timer">0:00</span>
+        </div>
+
+        <div class="puzzle-head">
+          <span class="domain" id="play-domain"></span>
+          <span class="difficulty" id="play-difficulty"></span>
+          <h2 id="play-title"></h2>
+          <p class="brief" id="play-brief"></p>
+        </div>
+
+        <div id="puzzle-body" class="puzzle-body"></div>
+
+        <ul id="hint-list" class="hints"></ul>
+
+        <div class="controls">
+          <div id="answer-wrap" class="answer-wrap">
+            <input
+              id="answer-input"
+              type="text"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="Type the plaintext"
+            />
+          </div>
+          <div class="buttons">
+            <button id="btn-hint" class="ghost" type="button">Hint</button>
+            <button id="btn-submit" class="primary" type="button">Submit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- explain -->
+      <section id="screen-explain" class="screen" hidden>
+        <div class="verdict-block">
+          <p id="verdict" class="verdict"></p>
+          <p id="verdict-detail" class="muted"></p>
+        </div>
+
+        <div class="card">
+          <h3><i>01</i>The method</h3>
+          <p id="explain-method"></p>
+        </div>
+
+        <div class="card">
+          <h3><i>02</i>Where this shows up</h3>
+          <p id="explain-real"></p>
+        </div>
+
+        <a id="explain-next" class="next-link" target="_blank" rel="noopener noreferrer"></a>
+
+        <div class="actions">
+          <button id="btn-continue" class="primary" type="button">Next puzzle</button>
+        </div>
+      </section>
+
+      <!-- results -->
+      <section id="screen-results" class="screen" hidden>
+        <div class="results-head">
+          <h2>Briefing<br />complete</h2>
+          <span class="stamp" aria-hidden="true">Filed</span>
+        </div>
+
+        <p id="results-grid" class="results-grid"></p>
+        <p id="results-line" class="results-line"></p>
+        <p id="results-streak" class="muted"></p>
+
+        <div class="card share-card">
+          <h3><i>//</i>Result card, spoiler free</h3>
+          <pre id="share-preview" class="share-preview"></pre>
+        </div>
+
+        <div class="actions">
+          <button id="btn-copy" class="primary" type="button">Copy result</button>
+          <button class="ghost" data-home type="button">Back</button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

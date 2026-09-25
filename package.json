@@ -1,0 +1,11 @@
+{
+  "name": "cold-open",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A daily security puzzle. Three generated techniques, five minutes.",
+  "scripts": {
+    "serve": "python3 -m http.server 8080",
+    "test": "node tests/run.mjs"
+  }
+}
