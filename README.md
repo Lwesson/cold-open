@@ -136,3 +136,7 @@ never a puzzle or an answer, so it can be posted the moment someone finishes.
   tracking parameters once the programs are approved.
 - Onboarding for a first time player. The handler voice (browser speech,
   off by default) and the film backdrop are built.
+
+## License
+
+MIT. See `LICENSE`.
